@@ -57,8 +57,8 @@
 
 .Jeopardy-box {
  background-color: darkblue;
- width: 25em;
- height: 5em;
+ width: 30em;
+ height: 10em;
  border: 0.5em solid blue;
  border-style: outset;
 }
