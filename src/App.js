@@ -12,7 +12,7 @@ function JeopardyCard(props) {
     answer,
     showAnswer
   } = props;
-  http://www.pennilessparenting.com/2012/11/baked-watermelon-steak-recipe-and.html
+
   return (
     <div>
       <div className="Jeopardy-box flex-box-column" style={{"height": "5em"}}>
@@ -89,9 +89,11 @@ function App() {
       <div>
         <JeopardyCard category={clue.category} question={clue.question} answer={clue.answer} showAnswer={clue.showAnswer}/>
       </div>
-      <div>
-        <input value={guess} onChange={(event) => {setGuess(event.target.value)}} type="text" />
-        <button onClick={handleGuess}>Guess</button>
+      <div className='form-group form-inline mt-4'>
+        <form>
+          <input className='form-control' value={guess} onChange={(event) => {setGuess(event.target.value)}} type="text" />
+          <button className='btn btn-primary' onClick={handleGuess}>Guess</button>
+        </form>
       </div>
       <div>
         <button onClick={showAnswer}>Show Answer</button>
