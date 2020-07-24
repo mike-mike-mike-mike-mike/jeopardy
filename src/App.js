@@ -1,48 +1,102 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function getClue() {
   return fetch('http://jservice.io/api/random');
 }
 
+function JeopardyCard(props) {
+  const {
+    category,
+    question,
+    answer,
+    showAnswer
+  } = props;
+  http://www.pennilessparenting.com/2012/11/baked-watermelon-steak-recipe-and.html
+  return (
+    <div>
+      <div className="Jeopardy-box flex-box-column" style={{"height": "5em"}}>
+        <div style={{"font-size": "2em", "text-shadow": "2px 2px 0px black", "font-weight": "bold"}}>{category.toUpperCase()}</div>
+      </div>
+      <div className="Jeopardy-box flex-box-column" style={{"height": "15em"}}>
+        <div style={{"font-size": "2em", "padding": "0.5em"}}>{showAnswer ? answer : question}</div>
+      </div>
+    </div>
+  )
+}
+
+
 function App() {
   const [clue, setClue] = useState({
-    question: "something",
-    answer: "what is something?",
-    category: "Potent Potables"
+    question: "...",
+    answer: "...",
+    category: "...",
+    showAnswer: false
   })
+  const [guess, setGuess] = useState('');
+
 
   const nextClue = () => {
     getClue().then((clue) => {
-      console.log(clue);
       clue.json().then((response) => {
-        console.log(response[0]);
         const generatedClue = response[0];
-        debugger;
         setClue({
           question: generatedClue.question,
           answer: generatedClue.answer,
-          category: generatedClue.category.title
+          category: generatedClue.category.title,
+          showAnswer: false
         })
       });
     });
   }
+
+  const initializeClue = () => {
+    getClue().then((clue) => {
+      return clue.json()
+    }).then((response) => {
+        const generatedClue = response[0];
+        setClue({
+          question: generatedClue.question,
+          answer: generatedClue.answer,
+          category: generatedClue.category.title,
+          showAnswer: false
+        })
+    });
+  }
+
+  const handleGuess = () => {
+    console.log(guess)
+    if (guess.toLowerCase() === clue.answer.toLowerCase()) {
+      alert('correct');
+    } else {
+      alert('wrong');
+    }
+  }
+
+  if (clue.question === '...') {
+    initializeClue();
+  }
+
+  const showAnswer = () => {
+    setClue({...clue, showAnswer: true})
+  }
+
   return (
-    <div className="App">
-      <div>
+    <div className="App flex-box-column" style={{"background-color": "#00003A", "minHeight": "100%"}}>
+      <div className="Jeopardy-title">
         Jeopardy
       </div>
       <div>
-        Category: {clue.category}
+        <JeopardyCard category={clue.category} question={clue.question} answer={clue.answer} showAnswer={clue.showAnswer}/>
       </div>
       <div>
-        Answer: {clue.question}
+        <input value={guess} onChange={(event) => {setGuess(event.target.value)}} type="text" />
+        <button onClick={handleGuess}>Guess</button>
       </div>
       <div>
-        What is?: {clue.answer}
+        <button onClick={showAnswer}>Show Answer</button>
+        <button onClick={nextClue}>Get Clue</button>
       </div>
-      <button onClick={nextClue}>Get Clue</button>
     </div>
   );
 }
