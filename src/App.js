@@ -79,7 +79,7 @@ function App() {
           question: generatedClue.question,
           answer: generatedClue.answer,
           category: generatedClue.category.title,
-          value: generatedClue.value,
+          value: generatedClue.value || 0,
           showAnswer: false
         })
         setMessage(`"${generatedClue.category.title}" for ${generatedClue.value}...`)
@@ -98,6 +98,7 @@ function App() {
       setMessage("Right!")
     } else {
       addClueAnswered(clue.question, clue.answer, clue.category, clue.value, guess, false);
+      toggleShowAnswer();
       setMessage("Wrong!")
     }
   }
@@ -115,7 +116,6 @@ function App() {
   }
 
   const toggleShowAnswer = () => {
-    console.log("showing answer");
     setClue({...clue, showAnswer: !clue.showAnswer})
   }
 
@@ -129,31 +129,32 @@ function App() {
         Jeopardy
       </div>
       { gameState !== SUMMARY &&
-        <div>
+        <div className="flex-box-column">
           <div>
             <JeopardyCard value={clue.value} category={clue.category} question={clue.question} answer={clue.answer} showAnswer={clue.showAnswer}/>
           </div>
           <div className='form-group form-inline mt-4'>
             <form onSubmit={e => e.preventDefault()}>
-              <input disabled={gameState === GUESSED} className='form-control' value={guess} onChange={(event) => {setGuess(event.target.value)}} type="text" />
-              <button disabled={gameState === GUESSED} className='btn btn-primary mr-2' onClick={handleGuess}>Guess</button>
+              <input autocomplete="off" disabled={gameState === GUESSED} className='form-control' value={guess} onChange={(event) => {setGuess(event.target.value)}} type="text" />
+              <button disabled={gameState === GUESSED} className='btn btn-primary mx-2' onClick={handleGuess}>Guess</button>
               {
                 gameState === GUESSED && !isAnswerCorrect() &&
-                <button onClick={handleCorrectOverride} className='btn btn-secondary' >I was right!</button>
+                <button className='btn btn-success' type="button" onClick={nextClue}>Next Clue</button>
               }
             </form>
           </div>
           <div>
-            <button className='btn btn-secondary mr-2' type="button" onClick={toggleShowAnswer}>
+            <button className='btn btn-outline-danger btn-sm mr-2' type="button" onClick={toggleShowAnswer}>
               {
                 !clue.showAnswer ? "Show Answer" : "Show Question"
               }
             </button>
-            <button className='btn btn-secondary' type="button" onClick={nextClue}>
-              {
-                gameState === QUESTION ? "Skip Clue" : "Next Clue"
+            <span>
+              {gameState === QUESTION
+                ? <button className='btn btn-outline-warning btn-sm' type="button" onClick={nextClue}>Skip Clue</button>
+                : <button onClick={handleCorrectOverride} className='btn btn-outline-secondary btn-sm' >I was right!</button>
               }
-            </button>
+            </span>
           </div>
           <div>
             <p className='mt-4 h4'>{message}</p>
@@ -170,7 +171,7 @@ function App() {
         </div>
       }
       { gameState == SUMMARY &&
-        <div class="container">
+        <div class="container flex-box-column">
           <p>Summary:</p>
           <p>
             { 'You answered '}
@@ -178,12 +179,17 @@ function App() {
             { ' correctly, out of ' }
             { cluesAnswered.length }
           </p>
+          <p>
+            { 'On the show you would have made $' }
+            { cluesAnswered.reduce((total, clueAnswered) => (clueAnswered.isCorrect ? total + clueAnswered.value : total - clueAnswered.value), 0) }
+          </p>
           <table class="table-dark table-bordered table-hover">
             <thead>
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Question</th>
                 <th scope="col">Answer</th>
+                <th scope="col">Clue Value</th>
               </tr>
             </thead>
             <tbody>
@@ -192,6 +198,7 @@ function App() {
                 <th scope="row">{index + 1}</th>
                 <td>{clueAnswered.question}</td>
                 <td>{clueAnswered.answer}</td>
+                <td>{clueAnswered.value}</td>
               </tr>
             ))}
             </tbody>
