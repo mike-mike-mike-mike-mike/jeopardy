@@ -42,7 +42,7 @@ function App() {
   });
 
   const [guess, setGuess] = useState('');
-  const [message, setMessage] = useState('Welcome to Jeopardy!');
+  const [message, setMessage] = useState('Welcome to Jeopardy! Here are your clues for today...');
   const [gameState, setGameState] = useState(START);
   const [cluesAnswered, setCluesAnswered] = useState([]);
 
@@ -65,7 +65,7 @@ function App() {
 
   const nextClue = () => {
     setGuess("");
-    if (cluesAnswered.length == 2) {
+    if (cluesAnswered.length == 6) {
       setGameState(SUMMARY);
       return;
     }
@@ -133,7 +133,7 @@ function App() {
           <div>
             <JeopardyCard value={clue.value} category={clue.category} question={clue.question} answer={clue.answer} showAnswer={clue.showAnswer}/>
           </div>
-          <div className='form-group form-inline mt-4'>
+          <div className='form-group form-inline mt-4' autocomplete="off">
             <form onSubmit={e => e.preventDefault()}>
               <input autocomplete="off" disabled={gameState === GUESSED} className='form-control' value={guess} onChange={(event) => {setGuess(event.target.value)}} type="text" />
               <button disabled={gameState === GUESSED} className='btn btn-primary mx-2' onClick={handleGuess}>Guess</button>
@@ -176,8 +176,9 @@ function App() {
           <p>
             { 'You answered '}
             { cluesAnswered.filter((cluesAnswered) => cluesAnswered.isCorrect).length }
-            { ' correctly, out of ' }
+            { ' correctly, out of today\'s ' }
             { cluesAnswered.length }
+            { ' clues' }
           </p>
           <p>
             { 'On the show you would have made $' }
