@@ -138,7 +138,7 @@ function App() {
               <input autocomplete="off" disabled={gameState === GUESSED} className='form-control' value={guess} onChange={(event) => {setGuess(event.target.value)}} type="text" />
               <button disabled={gameState === GUESSED} className='btn btn-primary mx-2' onClick={handleGuess}>Guess</button>
               {
-                gameState === GUESSED && !isAnswerCorrect() &&
+                gameState === GUESSED &&
                 <button className='btn btn-success' type="button" onClick={nextClue}>Next Clue</button>
               }
             </form>
