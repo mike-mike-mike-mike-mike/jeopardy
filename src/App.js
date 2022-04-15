@@ -65,7 +65,7 @@ function App() {
 
   const nextClue = () => {
     setGuess("");
-    if (cluesAnswered.length == 6) {
+    if (cluesAnswered.length === 6) {
       setGameState(SUMMARY);
       return;
     }
@@ -75,6 +75,12 @@ function App() {
       clue.json().then((response) => {
         const generatedClue = response[0];
         console.log(generatedClue);
+
+        if(!generatedClue.value) {
+          nextClue();
+          return;
+        }
+
         setClue({
           question: generatedClue.question,
           answer: generatedClue.answer,
