@@ -110,10 +110,6 @@ function App() {
     }
   }
 
-  if (gameState === START) {
-    setGameState(QUESTION);
-    initializeClue();
-  }
 
   const toggleShowAnswer = () => {
     setClue({...clue, showAnswer: !clue.showAnswer})
@@ -123,12 +119,9 @@ function App() {
     return guess.toLowerCase() === clue.answer.toLowerCase();
   }
 
-  return (
-    <div className="App flex-box-column" style={{"background-color": "#00003A", "minHeight": "100%"}}>
-      <div className="Jeopardy-title">
-        Jeopardy
-      </div>
-      { gameState !== SUMMARY &&
+
+  const gameView = () => {
+    return (
         <div className="flex-box-column">
           <div>
             <JeopardyCard value={clue.value} category={clue.category} question={clue.question} answer={clue.answer} showAnswer={clue.showAnswer}/>
@@ -169,43 +162,77 @@ function App() {
             </p>
           </div>
         </div>
-      }
-      { gameState == SUMMARY &&
-        <div class="container flex-box-column">
-          <p>Summary:</p>
-          <p>
-            { 'You answered '}
-            { cluesAnswered.filter((cluesAnswered) => cluesAnswered.isCorrect).length }
-            { ' correctly, out of today\'s ' }
-            { cluesAnswered.length }
-            { ' clues' }
-          </p>
-          <p>
-            { 'On the show you would have made $' }
-            { cluesAnswered.reduce((total, clueAnswered) => (clueAnswered.isCorrect ? total + clueAnswered.value : total - clueAnswered.value), 0) }
-          </p>
-          <table class="table-dark table-bordered table-hover">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Question</th>
-                <th scope="col">Answer</th>
-                <th scope="col">Clue Value</th>
-              </tr>
-            </thead>
-            <tbody>
-            {cluesAnswered.map((clueAnswered, index) => (
-              <tr>
-                <th scope="row">{index + 1}</th>
-                <td>{clueAnswered.question}</td>
-                <td>{clueAnswered.answer}</td>
-                <td>{clueAnswered.value}</td>
-              </tr>
-            ))}
-            </tbody>
-          </table>
-        </div>
-      }
+    );
+  }
+
+  const summaryView = () => {
+    return (
+      <div class="container flex-box-column">
+        <p>Summary:</p>
+        <p>
+          { 'You answered '}
+          { cluesAnswered.filter((cluesAnswered) => cluesAnswered.isCorrect).length }
+          { ' correctly, out of today\'s ' }
+          { cluesAnswered.length }
+          { ' clues' }
+        </p>
+        <p>
+          { 'On the show you would have made $' }
+          { cluesAnswered.reduce((total, clueAnswered) => (clueAnswered.isCorrect ? total + clueAnswered.value : total - clueAnswered.value), 0) }
+        </p>
+        <table class="table-dark table-bordered table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Question</th>
+              <th scope="col">Answer</th>
+              <th scope="col">Clue Value</th>
+            </tr>
+          </thead>
+          <tbody>
+          {cluesAnswered.map((clueAnswered, index) => (
+            <tr>
+              <th scope="row">{index + 1}</th>
+              <td>{clueAnswered.question}</td>
+              <td>{clueAnswered.answer}</td>
+              <td>{clueAnswered.value}</td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  const startView = () => {
+    const start = () => {
+      setGameState(QUESTION);
+      initializeClue();
+    }
+
+    return(
+      <div class="container flex-box-column">
+        <button className='btn btn-primary btn-lg m-4' onClick={start}>Play</button>
+      </div>
+    )
+  }
+
+  const routeView = (state) => {
+    if (state == START) {
+      return startView();
+    } else if (state == SUMMARY) {
+      return summaryView();
+    } else {
+      return gameView();
+    }
+  }
+
+  return (
+    <div className="App flex-box-column" style={{"background-color": "#00003A", "minHeight": "100%"}}>
+      <div className="Jeopardy-title">
+        Jeopardy
+      </div>
+      { routeView(gameState) }
     </div>
   );
 }
