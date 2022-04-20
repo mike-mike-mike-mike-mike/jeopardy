@@ -69,7 +69,6 @@ function App() {
   const nextClue = () => {
     setGuess("");
     if (cluesAnswered.length === 6) {
-      soundBoard.playSound('outro');
       setGameState(SUMMARY);
       return;
     }
