@@ -12,6 +12,7 @@ function JeopardyCard(props) {
     question,
     answer,
     value,
+    airDate,
     showAnswer
   } = props;
 
@@ -19,6 +20,7 @@ function JeopardyCard(props) {
     <div>
       <div className="Jeopardy-box flex-box-column" style={{"height": "7em"}}>
         <div style={{"font-size": "2em", "text-shadow": "2px 2px 0px black", "font-weight": "bold"}}>{category.toUpperCase()} ({value})</div>
+        <div style={{"font-size": "1em", "text-shadow": "2px 2px 0px black", "font-style": "italic"}}>{`AIRED IN ${airDate}`}</div>
       </div>
       <div className="Jeopardy-box flex-box-column" style={{"height": "18em", "overflow-y": "auto"}}>
         <div style={{"font-size": "2em", "padding": "0.5em"}}>{showAnswer ? answer : question}</div>
@@ -39,7 +41,8 @@ function App() {
     answer: "...",
     category: "...",
     value: "",
-    showAnswer: false
+    showAnswer: false,
+    airDate: "..."
   });
 
   const [guess, setGuess] = useState('');
@@ -89,7 +92,8 @@ function App() {
           answer: generatedClue.answer,
           category: generatedClue.category.title,
           value: generatedClue.value || 0,
-          showAnswer: false
+          showAnswer: false,
+          airDate: new Date(generatedClue.airdate).getFullYear()
         })
 
         soundBoard.playSpeech(`${generatedClue.category.title} for ${generatedClue.value}. ${generatedClue.question}`);
@@ -138,7 +142,7 @@ function App() {
     return (
         <div className="flex-box-column">
           <div>
-            <JeopardyCard value={clue.value} category={clue.category} question={clue.question} answer={clue.answer} showAnswer={clue.showAnswer}/>
+            <JeopardyCard value={clue.value} category={clue.category} question={clue.question} answer={clue.answer} airDate={clue.airDate} showAnswer={clue.showAnswer}/>
           </div>
           <div className='form-group form-inline mt-4' autocomplete="off">
             <form onSubmit={e => e.preventDefault()}>
