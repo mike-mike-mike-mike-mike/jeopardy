@@ -1,13 +1,16 @@
 const files = {
-  'intro': '/assets/jeopardy-intro.mp3',
-  'right': '/assets/jeopardy-right.mp3',
-  'wrong': '/assets/jeopardy-wrong.mp3',
-  'board-fill': '/assets/jeopardy-board-fill.mp3',
-  'outro': '/assets/jeopardy-outro.mp3',
+  'right': '/jeopardy/assets/jeopardy-right.mp3',
+  'wrong': '/jeopardy/assets/jeopardy-wrong.mp3',
+  'board-fill': '/jeopardy/assets/jeopardy-board-fill.mp3',
+  'outro': '/jeopardy/assets/jeopardy-outro.mp3',
+}
+
+function simplifyText(text) {
+  text = text.replace(/&/g, 'and');
+  return text;
 }
 
 export default function SoundBoard(speechSynthesisModule) {
-  const speechSynthesis = speechSynthesisModule;
   let soundBoard = {};
   let audios = {};
 
@@ -21,12 +24,29 @@ export default function SoundBoard(speechSynthesisModule) {
   }
 
   soundBoard.playSpeech = (text) => {
-    const voiceOptions = speechSynthesis.getVoices();
-    const preferredVoice = voiceOptions.find(voice => voice.name === "Microsoft Clara Online (Natural) - English (Canada)");
-
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.voice = preferredVoice;
-    window.speechSynthesis.speak(msg);
+    console.log(text);
+    console.log(simplifyText(text));
+    fetch(`https://api.elevenlabs.io/v1/text-to-speech/onwK4e9ZLuTAKqWW03F9?optimize_streaming_latency=3`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'audio/mpeg',
+        'xi-api-key': '55b5a150bed2630a646cad5d016eb841',
+      },
+      body: JSON.stringify({ 
+        text: simplifyText(text),
+        model_id: 'eleven_monolingual_v1',
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.5
+        }
+      })
+    })
+    .then(res => res.blob())
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        new Audio(url).play();
+    }).catch(err => console.log(err));
   }
 
   return soundBoard;

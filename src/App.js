@@ -96,6 +96,8 @@ function App() {
           airDate: new Date(generatedClue.airdate).getFullYear()
         })
 
+        console.log('playing speech')
+        console.log(`${generatedClue.category.title} for ${generatedClue.value}. ${generatedClue.question}`);
         soundBoard.playSpeech(`${generatedClue.category.title} for ${generatedClue.value}. ${generatedClue.question}`);
         setMessage(`"${generatedClue.category.title}" for ${generatedClue.value}...`)
       });
